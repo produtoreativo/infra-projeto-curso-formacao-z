@@ -15,6 +15,8 @@ services:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
+    networks:
+      - webshop
 
   phpmyadmin:
     image: phpmyadmin:5
@@ -27,6 +29,8 @@ services:
       - PMA_ARBITRARY=1
       - PMA_HOST=mysql
       - PMA_USER=magento
+    networks:
+      - webshop
 
   magento:
     image: docker.io/bitnami/magento:2
@@ -53,6 +57,8 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
+    networks:
+      - webshop
 
   elasticsearch:
     image: docker.io/bitnami/elasticsearch:7.17.10
@@ -71,6 +77,9 @@ services:
         interval: 30s
         timeout: 30s
         retries: 5
+    networks:
+      - webshop
+
   kibana:
     image: docker.elastic.co/kibana/kibana:7.17.10
     ports:
@@ -87,6 +96,8 @@ services:
       interval: 30s
       timeout: 30s
       retries: 5
+    networks:
+      - webshop
 
   postgresql:
     image: "postgres:14"
@@ -103,6 +114,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - webshop
 
   pgadmin:
     image: dpage/pgadmin4
@@ -114,6 +127,8 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=pgadmin
     ports:
       - '8585:80'
+    networks:
+      - webshop
 
   # redis:
   #   image: redis
@@ -122,6 +137,27 @@ services:
   #     - "6379:6379"
   #   healthcheck:
   #     test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+
+  webshop-api:
+    container_name: webshop-api
+    image: webshop-api
+    restart: unless-stopped
+    build:
+      context: ./webshop-api
+      dockerfile: Dockerfile
+      target: development
+    volumes:
+      - ./webshop-api:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+    networks:
+      - webshop
+    command: npx nest start --watch
+
+networks:
+  webshop:
+    driver: bridge
 
 volumes:
   mysql_data:
