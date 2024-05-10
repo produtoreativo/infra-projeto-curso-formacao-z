@@ -1,4 +1,5 @@
 include:
+  - ./docker/elastic.yml
   - ./docker/magento.yml
   - ./docker/postgres.yml
   # - ./docker/redis.yml

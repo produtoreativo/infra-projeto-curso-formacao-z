@@ -8,3 +8,6 @@ services:
       - "6379:6379"
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+    labels:
+      - co.elastic.logs/enabled=false
+      - co.elastic.metrics/enabled=false

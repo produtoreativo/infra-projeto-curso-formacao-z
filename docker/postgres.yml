@@ -16,6 +16,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    labels:
+      - co.elastic.logs/enabled=false
+      - co.elastic.metrics/enabled=false
 
   pgadmin:
     image: dpage/pgadmin4
@@ -28,6 +31,9 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=pgadmin
     ports:
       - '8585:80'
+    labels:
+      - co.elastic.logs/enabled=false
+      - co.elastic.metrics/enabled=false
 
 volumes:
   postgres_data:

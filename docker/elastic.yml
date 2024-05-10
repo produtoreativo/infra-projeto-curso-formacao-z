@@ -1,0 +1,138 @@
+services:
+
+  elasticsearch:
+    image: docker.io/bitnami/elasticsearch:7.17.10
+    container_name: elasticsearch
+    volumes:
+      - elasticsearch_data:/bitnami/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - node.name=elasticsearch
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - 9200:9200
+    healthcheck:
+        test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
+        interval: 30s
+        timeout: 30s
+        retries: 5
+    labels:
+      - co.elastic.logs/enabled=false
+      - co.elastic.metrics/enabled=false
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.10
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [ "CMD-SHELL", "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'" ]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+    labels:
+      - co.elastic.logs/enabled=false
+      - co.elastic.metrics/enabled=false
+
+  apm:
+    image: docker.elastic.co/apm/apm-server-oss:7.17.0
+    container_name: apm
+    hostname: apm
+    user: root
+    command: --strict.perms=false -e
+    volumes:
+    - ./elastic/apm/apm-server.yml:/usr/share/apm-server/apm-server.yml
+    ports:
+      - "8200:8200"
+    restart: on-failure
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    labels:
+      - co.elastic.logs/enabled=false
+      - co.elastic.metrics/enabled=false
+
+  filebeat:
+    build:
+      context: elastic/beats/file
+    container_name: filebeat
+    hostname: filebeat
+    restart: on-failure
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: /var/lib/docker
+        target: /var/lib/docker
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    labels:
+      - co.elastic.logs/enabled=false
+      - co.elastic.metrics/enabled=false
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:7.17.19
+    container_name: host_metrics
+    hostname: host_metrics
+    restart: on-failure
+    user: root
+    command: --strict.perms=false -e
+    environment:
+      - setup.kibana.host=kibana:5601
+      - output.elasticsearch.hosts=["elasticsearch:9200"]
+    volumes:
+      - ./elastic/beats/metric/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /proc:/hostfs/proc:ro
+      - /:/hostfs:ro
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    labels:
+      - co.elastic.logs/enabled=false
+      - co.elastic.metrics/enabled=false
+
+  heartbeat:
+    image: docker.elastic.co/beats/heartbeat:7.17.19
+    container_name: heartbeat
+    hostname: heartbeat
+    restart: on-failure
+    user: root
+    command: --strict.perms=false -e
+    volumes:
+    - ./elastic/beats/heartbeat/heartbeat.yml:/usr/share/heartbeat/heartbeat.yml
+    environment:
+    - setup.kibana.host=kibana:5601
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    labels:
+      - co.elastic.logs/enabled=false
+      - co.elastic.metrics/enabled=false
+
+

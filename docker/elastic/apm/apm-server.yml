@@ -1,0 +1,36 @@
+######################### APM Server Configuration #########################
+
+apm-server:
+  # Defines the host and port the server is listening on. Use "unix:/path/to.sock" to listen on a unix domain socket.
+  host: "0.0.0.0:8200"
+
+  #---------------------------- APM Server - RUM Real User Monitoring ----------------------------
+  rum:
+    enabled: true
+    allow_origins: ['*']
+
+    library_pattern: "node_modules|bower_components|~"
+    exclude_from_grouping: "^/webpack"
+
+    source_mapping:
+      enabled: true
+
+      elasticsearch:
+        hosts: ["localhost:9200"]
+        username: "elastic"
+        password: "changeme"
+      #cache:
+        expiration: 5m
+
+      index_pattern: "apm-*-sourcemap*"
+
+  kibana:
+    enabled: true
+    host: "kibana:5601"
+
+#-------------------------- Elasticsearch output --------------------------
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+
+
+
