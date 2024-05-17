@@ -97,15 +97,17 @@ services:
     restart: on-failure
     user: root
     command: --strict.perms=false -e
+    network_mode: "host"
+    #command: "sh -c 'tail -f /etc/passwd'"
     environment:
-      - setup.kibana.host=kibana:5601
-      - output.elasticsearch.hosts=["elasticsearch:9200"]
+      - DBUS_SYSTEM_BUS_ADDRESS='unix:path=/hostfs/var/run/dbus/system_bus_socket'
     volumes:
       - ./elastic/beats/metric/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
       - /proc:/hostfs/proc:ro
       - /:/hostfs:ro
+      - /var/run/dbus/system_bus_socket:/hostfs/var/run/dbus/system_bus_socket:ro
     depends_on:
       elasticsearch:
         condition: service_healthy

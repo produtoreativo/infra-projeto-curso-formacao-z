@@ -7,6 +7,11 @@ heartbeat.monitors:
 
 - type: http
   schedule: '@every 5s'
+  urls: [ "http://magento:8080" ]
+  name: Magento
+
+- type: http
+  schedule: '@every 5s'
   urls: [ "http://webshop-api:3000" ]
   name: webshop-api # the service name in the apm
 
@@ -25,6 +30,11 @@ heartbeat.monitors:
   schedule: '@every 5s'
   hosts: [ "kibana"]
   name: Kibana server
+
+- type: icmp
+  schedule: '@every 5s'
+  hosts: [ "Mysql"]
+  name: MySQL server
 
 
 
