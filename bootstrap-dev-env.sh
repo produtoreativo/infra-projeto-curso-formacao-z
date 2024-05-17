@@ -27,8 +27,9 @@ do
   fi
 done
 
-cd search-api && git checkout 1.0.0 && cd ..
-cd webshop-api && git checkout 1.0.0 && cd ..
+cd search-api && git checkout melt && cd ..
+cd webshop-api && git checkout melt && cd ..
+git checkout melt
 
 # Executa o Docker Compose
 docker compose -f docker-compose.yml up -d
