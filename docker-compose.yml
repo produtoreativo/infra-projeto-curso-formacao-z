@@ -5,7 +5,7 @@ include:
   # - ./docker/redis.yml
   - ./webshop-api/docker-compose.yml
   - ./search-api/docker-compose.yml
-  # - ./order-mngt-api/docker-compose.yml
+  - ./order-mngt-api/docker-compose.yaml
   # - ./payments/docker-compose.yml
 
 networks:

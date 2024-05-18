@@ -4,7 +4,7 @@
 repos=(
   "git@github.com:produtoreativo/webshop-api.git"
   "git@github.com:produtoreativo/search-api.git"
-  "git@github.com:produtoreativo/order-mngt-api.git"
+  "git@github.com:rheckalves/order-mngt-api.git"
   "git@github.com:produtoreativo/payments.git"
   )
 
@@ -19,6 +19,9 @@ do
     echo "Atualizando o repositório $repo_name"
     cd "$repo_name"
     git pull
+	if [ "$repo_name" == "order-mngt-api" ]; then
+      git checkout 1.0.0
+    fi
     cd ..
   else
     # Se não existir, clona o repositório
