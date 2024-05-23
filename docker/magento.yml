@@ -1,5 +1,7 @@
 services:
 
+  ## post install config
+  # Configuration > Services > Magento Web API > Web API Security. Then select Yes from the Allow Anonymous Guest Access menu.
   magento:
     image: docker.io/bitnami/magento:2
     container_name: magento
