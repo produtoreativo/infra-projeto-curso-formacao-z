@@ -4,6 +4,7 @@ services:
     #image: docker.io/bitnami/magento:2
     build:
       context: .
+    hostname: magento
     container_name: magento
     privileged: true
     ports:
@@ -53,6 +54,7 @@ services:
     ports:
       - "3306:3306"
     environment:
+      - MYSQL_ROOT_PASSWORD=root
       - ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_USER=magento
       - MYSQL_DATABASE=magento

@@ -5,6 +5,12 @@ metricbeat.modules:
   hosts: ["unix:///var/run/docker.sock"]
   period: 10s
 
+- module: mysql
+  metricsets: ["status"]
+  hosts: ["tcp(localhost:3306)/"]
+  username: root
+  password: root
+
 output.elasticsearch:
   hosts: ["http://localhost:9200"]
 

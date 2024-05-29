@@ -29,6 +29,7 @@ done
 
 cd search-api && git checkout melt && cd ..
 cd webshop-api && git checkout melt && cd ..
+cd order-mngt-api && git checkout melt && cd ..
 git checkout melt
 
 # Executa o Docker Compose

@@ -20,6 +20,11 @@ heartbeat.monitors:
   urls: [ "http://search-api:3001/search/all" ]
   name: search-api
 
+- type: http
+  schedule: '@every 5s'
+  urls: [ "http://order-mngt-api:3002" ]
+  name: order-mngt-api
+
 
 - type: icmp
   schedule: '@every 5s'
