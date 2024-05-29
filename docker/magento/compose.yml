@@ -1,7 +1,9 @@
 services:
 
   magento:
-    image: docker.io/bitnami/magento:2
+    #image: docker.io/bitnami/magento:2
+    build:
+      context: .
     container_name: magento
     privileged: true
     ports:
@@ -19,6 +21,15 @@ services:
       - ELASTICSEARCH_PORT_NUMBER=9200
       - ALLOW_EMPTY_PASSWORD=yes
       - BITNAMI_DEBUG=true
+
+      - ELASTIC_APM_ENABLED=true
+      - ELASTIC_APM_SERVER_URL=http://apm:8200
+      - ELASTIC_APM_SERVICE_NAME=magento
+      - ELASTIC_APM_ENVIRONMENT=development
+      - ES_HOST=elasticsearch:9200
+      - KIB_HOST=kibana:5601
+      - ELASTIC_PASSWORD=changeme
+      - KIBANA_PASSWORD=changeme
     volumes:
       - 'magento_data:/bitnami/magento'
     healthcheck:

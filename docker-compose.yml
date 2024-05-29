@@ -1,6 +1,6 @@
 include:
   - ./docker/elastic.yml
-  - ./docker/magento.yml
+  - ./docker/magento/compose.yml
   - ./docker/postgres.yml
   # - ./docker/redis.yml
   - ./webshop-api/docker-compose.yml
