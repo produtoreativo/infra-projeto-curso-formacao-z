@@ -1,5 +1,9 @@
 services:
-
+  ## post install config
+  #
+  # Configuration > Services > Magento Web API > Web API Security. Then select Yes from the Allow Anonymous Guest Access menu.
+  # Configuration > Services > OAuth > Then select Yes for Allow OAuth Access Tokens to be used as standalone Bearer tokens
+  #
   magento:
     #image: docker.io/bitnami/magento:2
     build:
@@ -34,9 +38,11 @@ services:
     volumes:
       - 'magento_data:/bitnami/magento'
     healthcheck:
-      test: curl -f http://localhost:8080/rest
-      timeout: 20s
-      retries: 50
+      test: curl --fail http://localhost:8080/ || exit 1
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+      interval: 3s
     depends_on:
       mysql:
         condition: service_healthy

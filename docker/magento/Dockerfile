@@ -1,4 +1,4 @@
-FROM docker.io/bitnami/magento:2
+FROM docker.io/bitnami/magento:2.4.6
 
 RUN apt-get update && apt-get install -y curl
 
