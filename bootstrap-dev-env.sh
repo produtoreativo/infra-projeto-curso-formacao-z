@@ -29,6 +29,7 @@ done
 
 cd search-api && git checkout 1.0.0 && cd ..
 cd webshop-api && git checkout 1.0.0 && cd ..
+cd order-mngt-api && git checkout 1.0.0 && cd ..
 
 # Executa o Docker Compose
 docker compose -f docker-compose.yml up -d
